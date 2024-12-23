@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import Cards from "./div-card.jsx";
+import gameController from "./gameController.jsx";
 
 export default function Card() {
     // const [names, setNames] = useState([]);
@@ -16,10 +17,10 @@ export default function Card() {
                     const response = await pokemonUrl.json();
                     return {
                         name: item.name,
-                        url: response.sprites.front_default
+                        url: response.sprites.front_default,
+                        id: response.id,
                     }
                 });
-                
                 const imageData = await Promise.all(imgPromise);
                 setImages(imageData.slice(0, 10))
             } catch {
@@ -29,12 +30,25 @@ export default function Card() {
 
         fetchData()
     }, [])
-    
-    
+
+    const shuffledCards = () => {
+        const shuffled = gameController(image).filter(item => item !== undefined);
+        setImages(shuffled)
+        return shuffled;
+    }
+
     return (
         <section className="pokemon-cards">
             {image.map((items, index) => {
-                return <Cards key={index} imgUrl={items.url} name={items.name} />
+                return (
+                    <Cards 
+                        onClick={shuffledCards
+                        }
+                        key={index}
+                        imgUrl={items.url} 
+                        name={items.name} 
+                        />
+                )
             })}
         </section>
     )
