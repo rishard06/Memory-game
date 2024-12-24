@@ -2,9 +2,9 @@ import { useState, useEffect } from "react"
 import Cards from "./div-card.jsx";
 import gameController from "./gameController.jsx";
 
-export default function Card() {
-    // const [names, setNames] = useState([]);
+export default function Card({ addScore, resetScore }) {
     const [image, setImages] = useState([]);
+    const [clicked, setNameClicked] = useState(new Set());
 
     useEffect(() => {
         const fetchData = async() => {
@@ -37,13 +37,27 @@ export default function Card() {
         return shuffled;
     }
 
+    const handleScore = (name) => {
+        if(clicked.has(name)) {
+            alert("You Lose!");
+            setNameClicked(new Set());
+            resetScore();
+        }else {
+            setNameClicked((prev) => new Set(prev).add(name))
+            addScore(1);
+        }
+    }
+
     return (
         <section className="pokemon-cards">
             {image.map((items, index) => {
                 return (
                     <Cards 
-                        onClick={shuffledCards
-                        }
+                        onClick={() => {
+                            handleScore(items.name)
+                            shuffledCards()
+                            console.log(items.name)
+                        }}
                         key={index}
                         imgUrl={items.url} 
                         name={items.name} 
